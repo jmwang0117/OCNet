@@ -86,16 +86,16 @@ class SemanticKITTI_dataloader(Dataset):
           assert len(os.listdir(sequence)) > 0, 'Error, No files in sequence: {}'.format(sequence)
           self.filepaths['3D_OCCLUDED'] += sorted(glob(os.path.join(sequence, 'voxels', '*.occluded')))
 
-    # if modality == '3D_OCCUPANCY':
-    #   self.filepaths['3D_OCCUPANCY'] = []
-    #   for sequence in sequences:
-    #     assert len(os.listdir(sequence)) > 0, 'Error, No files in sequence: {}'.format(sequence)
-    #     self.filepaths['3D_OCCUPANCY'] += sorted(glob(os.path.join(sequence, 'voxels', '*.bin')))
-
     if modality == '3D_OCCUPANCY':
       self.filepaths['3D_OCCUPANCY'] = []
-      specified_bin_file = '/root/datasets/semantic_kitti/dataset/sequences/00/voxels/000005.bin'
-      self.filepaths['3D_OCCUPANCY'].append(specified_bin_file)
+      for sequence in sequences:
+        assert len(os.listdir(sequence)) > 0, 'Error, No files in sequence: {}'.format(sequence)
+        self.filepaths['3D_OCCUPANCY'] += sorted(glob(os.path.join(sequence, 'voxels', '*.bin')))
+
+    # if modality == '3D_OCCUPANCY':
+    #   self.filepaths['3D_OCCUPANCY'] = []
+    #   specified_bin_file = '/root/datasets/semantic_kitti/dataset/sequences/00/voxels/000005.bin'
+    #   self.filepaths['3D_OCCUPANCY'].append(specified_bin_file)
       
     # if modality == '2D_RGB':
     #   self.filepaths['2D_RGB'] = []

@@ -1,4 +1,6 @@
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"  # Specify the fourth GPU
+import time
 import argparse
 import torch
 import torch.nn as nn
@@ -10,19 +12,19 @@ repo_path, _ = os.path.split(os.path.realpath(__file__))
 repo_path, _ = os.path.split(repo_path)
 sys.path.append(repo_path)
 
-from LMSCNet.common.seed import seed_all
-from LMSCNet.common.config import CFG
-from LMSCNet.common.dataset import get_dataset
-from LMSCNet.common.model import get_model
-from LMSCNet.common.logger import get_logger
-from LMSCNet.common.optimizer import build_optimizer, build_scheduler
-from LMSCNet.common.io_tools import dict_to
-from LMSCNet.common.metrics import Metrics
-import LMSCNet.common.checkpoint as checkpoint
+from OCNet.common.seed import seed_all
+from OCNet.common.config import CFG
+from OCNet.common.dataset import get_dataset
+from OCNet.common.model import get_model
+from OCNet.common.logger import get_logger
+from OCNet.common.optimizer import build_optimizer, build_scheduler
+from OCNet.common.io_tools import dict_to
+from OCNet.common.metrics import Metrics
+import OCNet.common.checkpoint as checkpoint
 
 
 def parse_args():
-  parser = argparse.ArgumentParser(description='LMSCNet training')
+  parser = argparse.ArgumentParser(description='OCNet training')
   parser.add_argument(
     '--cfg',
     dest='config_file',
@@ -59,6 +61,9 @@ def train(model, optimizer, scheduler, dataset, _cfg, start_epoch, logger, tbwri
   """
 
   device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+  num_gpus = torch.cuda.device_count()
+  print(f'You are using {num_gpus} GPUs')
+
   dtype = torch.float32  # Tensor type to be used
 
   # Moving optimizer and model to used device
@@ -73,12 +78,23 @@ def train(model, optimizer, scheduler, dataset, _cfg, start_epoch, logger, tbwri
   nbr_epochs = _cfg._dict['TRAIN']['EPOCHS']
   nbr_iterations = len(dset)  # number of iterations depends on batchs size
 
-  # Defining metrics class and initializing them..
-  metrics = Metrics(dset.dataset.nbr_classes, nbr_iterations, model.get_scales())
-  metrics.reset_evaluator()
-  metrics.losses_track.set_validation_losses(model.get_validation_loss_keys())
-  metrics.losses_track.set_train_losses(model.get_train_loss_keys())
+  # Get the model's scales
+  scales = model.module.get_scales() if isinstance(model, nn.DataParallel) else model.get_scales()
 
+  # Create the Metrics object
+  metrics = Metrics(dset.dataset.nbr_classes, nbr_iterations, scales)
+  metrics.reset_evaluator()
+  # Get the validation loss keys from the original model
+  validation_loss_keys = model.module.get_validation_loss_keys() if isinstance(model, nn.DataParallel) else model.get_validation_loss_keys()
+
+  # Set the validation losses in the Metrics object
+  metrics.losses_track.set_validation_losses(validation_loss_keys)
+  if isinstance(model, nn.DataParallel):
+    keys = model.module.get_train_loss_keys()
+  else:
+    keys = model.get_train_loss_keys()
+  metrics.losses_track.set_train_losses(keys)
+ 
   for epoch in range(start_epoch, nbr_epochs+1):
 
     logger.info('=> =============== Epoch [{}/{}] ==============='.format(epoch, nbr_epochs))
@@ -97,7 +113,7 @@ def train(model, optimizer, scheduler, dataset, _cfg, start_epoch, logger, tbwri
 
       scores = model(data)
 
-      loss = model.compute_loss(scores, data)
+      loss = model.module.compute_loss(scores, data) if isinstance(model, nn.DataParallel) else model.compute_loss(scores, data)
 
       # Zero out the gradients.
       optimizer.zero_grad()
@@ -120,7 +136,8 @@ def train(model, optimizer, scheduler, dataset, _cfg, start_epoch, logger, tbwri
         for key in loss.keys(): loss_print += '{} = {:.6f},  '.format(key, loss[key])
         logger.info(loss_print[:-3])
 
-      metrics.add_batch(prediction=scores, target=model.get_target(data))
+      target = model.module.get_target(data) if isinstance(model, nn.DataParallel) else model.get_target(data)
+      metrics.add_batch(prediction=scores, target=target)
 
     for l_key in metrics.losses_track.train_losses:
       tbwriter.add_scalar('train_loss_epoch/{}'.format(l_key),
@@ -133,9 +150,9 @@ def train(model, optimizer, scheduler, dataset, _cfg, start_epoch, logger, tbwri
     for scale in metrics.evaluator.keys():
       tbwriter.add_scalar('train_performance/{}/mIoU'.format(scale), metrics.get_semantics_mIoU(scale).item(), epoch-1)
       tbwriter.add_scalar('train_performance/{}/IoU'.format(scale), metrics.get_occupancy_IoU(scale).item(), epoch-1)
-      # tbwriter.add_scalar('train_performance/{}/Precision'.format(scale), metrics.get_occupancy_Precision(scale).item(), epoch-1)
-      # tbwriter.add_scalar('train_performance/{}/Recall'.format(scale), metrics.get_occupancy_Recall(scale).item(), epoch-1)
-      # tbwriter.add_scalar('train_performance/{}/F1'.format(scale), metrics.get_occupancy_F1(scale).item(), epoch-1)
+      tbwriter.add_scalar('train_performance/{}/Precision'.format(scale), metrics.get_occupancy_Precision(scale).item(), epoch-1)
+      tbwriter.add_scalar('train_performance/{}/Recall'.format(scale), metrics.get_occupancy_Recall(scale).item(), epoch-1)
+      tbwriter.add_scalar('train_performance/{}/F1'.format(scale), metrics.get_occupancy_F1(scale).item(), epoch-1)
 
     logger.info('=> [Epoch {} - Total Train Loss = {}]'.format(epoch, epoch_loss))
     for scale in metrics.evaluator.keys():
@@ -273,10 +290,11 @@ def validate(model, dset, _cfg, epoch, logger, tbwriter, metrics):
 
 
 def main():
+  start_time = time.time()
 
   # https://github.com/pytorch/pytorch/issues/27588
   torch.backends.cudnn.enabled = False
-
+  
   seed_all(0)
 
   args = parse_args()
@@ -303,18 +321,18 @@ def main():
 
   logger.info('=> Loading network architecture...')
   model = get_model(_cfg, dataset['train'].dataset)
+  device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
   if torch.cuda.device_count() > 1:
-    model = nn.DataParallel(model)
-    model = model.module
-
+      model = nn.DataParallel(model.to(device))
+  else:
+      model = model.to(device)
   logger.info('=> Loading optimizer...')
   optimizer = build_optimizer(_cfg, model)
   scheduler = build_scheduler(_cfg, optimizer)
 
-  model, optimizer, scheduler, epoch = checkpoint.load(model, optimizer, scheduler, _cfg._dict['STATUS']['RESUME'],
-                                                       _cfg._dict['STATUS']['LAST'], logger)
+  #model, optimizer, scheduler, epoch = checkpoint.load(model, optimizer, scheduler, _cfg._dict['STATUS']['RESUME'], _cfg._dict['STATUS']['LAST'], logger)
 
-  best_record = train(model, optimizer, scheduler, dataset, _cfg, epoch, logger, tbwriter)
+  best_record = train(model, optimizer, scheduler, dataset, _cfg, 80, logger, tbwriter)
 
   logger.info('=> ============ Network trained - all epochs passed... ============')
 
@@ -323,7 +341,10 @@ def main():
   logger.info('=> Writing config file in output folder - deleting from config files folder')
   _cfg.finish_config()
   logger.info('=> Training routine completed...')
-
+   # 记录结束时间，并计算训练总时长
+  end_time = time.time()  # 记录结束时间
+  total_time = end_time - start_time  # 计算总耗时
+  logger.info("Total training time: {:.2f} seconds".format(total_time))  # Log training time
   exit()
 
 

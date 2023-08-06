@@ -1,0 +1,44 @@
+DATALOADER:
+  NUM_WORKERS: 4
+DATASET:
+  AUGMENTATION:
+    FLIPS: true
+  MODALITIES:
+    3D_LABEL: true
+    3D_OCCLUDED: true
+    3D_OCCUPANCY: true
+  ROOT_DIR: /root/datasets/semantic_kitti
+  SPLIT:
+    TEST: 1
+    TRAIN: 1
+    VAL: 1
+  TYPE: SemanticKITTI
+MODEL:
+  TYPE: OCNet
+OPTIMIZER:
+  NAME: Adam
+  LEARNING_RATE: 0.001
+  WEIGHT_DECAY: 0.0001
+OUTPUT:
+  BEST_LOSS: 0.527910590171814
+  BEST_METRIC: 0.00012171738906085069
+  OUTPUT_PATH: /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035
+  OUT_ROOT: /root/OCNet/SSC_out/
+SCHEDULER:
+  FREQUENCY: epoch
+  LR_POWER: 0.98
+  TYPE: power_iteration
+STATUS:
+  BEST_LOSS: /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035/chkpt/best-loss
+  BEST_METRIC: /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035/chkpt/best-metric
+  CONFIG: /root/OCNet/SSC_configs/routines/OCNet.yaml
+  LAST: /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035/chkpt/last
+  RESUME: true
+TRAIN:
+  BATCH_SIZE: 20
+  CHECKPOINT_PERIOD: 15
+  EPOCHS: 80
+  SUMMARY_PERIOD: 50
+VAL:
+  BATCH_SIZE: 8
+  SUMMARY_PERIOD: 20

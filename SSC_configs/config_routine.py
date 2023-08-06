@@ -7,13 +7,13 @@ repo_path, _ = os.path.split(os.path.realpath(__file__))
 repo_path, _ = os.path.split(repo_path)
 sys.path.append(repo_path)
 
-from LMSCNet.common.io_tools import _create_directory
+from OCNet.common.io_tools import _create_directory
 
 config_dict = {}
 
 output_root = ''
 output_folder = 'routines'
-output_filename = 'LMSCNet.yaml'
+output_filename = 'OCNet.yaml'
 out_path = os.path.join(output_root, output_folder, output_filename)
 
 # -------------------------------------------------------------
@@ -29,14 +29,14 @@ config_dict['DATASET']['MODALITIES'] = {}
 config_dict['DATASET']['MODALITIES']['3D_LABEL'] = True
 config_dict['DATASET']['MODALITIES']['3D_OCCUPANCY'] = True
 config_dict['DATASET']['MODALITIES']['3D_OCCLUDED'] = True
-config_dict['DATASET']['ROOT_DIR'] = '/root/datasets/semantic_kitti/dataset'
+config_dict['DATASET']['ROOT_DIR'] = '/root/datasets/semantic_kitti'
 config_dict['DATASET']['AUGMENTATION'] = {}
 config_dict['DATASET']['AUGMENTATION']['FLIPS'] = True  # More data augmentation can be added in dataloader
 # -------------------------------------------------------------
 
 # -------------------------------------------------------------
 config_dict['MODEL'] = {}
-config_dict['MODEL']['TYPE'] = 'LMSCNet'  # [LMSCNet, LMSCNet_SS, SSCNet, SSCNet_full]
+config_dict['MODEL']['TYPE'] = 'OCNet'  # [LMSCNet, LMSCNet_SS, SSCNet, SSCNet_full]
 # -------------------------------------------------------------
 
 # -------------------------------------------------------------
@@ -53,7 +53,7 @@ config_dict['OPTIMIZER']['BETA2'] = 0.999
 
 # -------------------------------------------------------------
 config_dict['OUTPUT'] = {}
-config_dict['OUTPUT']['OUT_ROOT'] = '/root/LMSCNet/SSC_out/'
+config_dict['OUTPUT']['OUT_ROOT'] = '/root/OCNet/SSC_out/'
 # -------------------------------------------------------------
 
 # -------------------------------------------------------------

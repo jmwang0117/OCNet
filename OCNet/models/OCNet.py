@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 import numpy as np
-
+from OCNet.models.MobileViTv2Attention import MobileViTv2Attention
 
 class SegmentationHead(nn.Module):
   '''
@@ -46,12 +46,12 @@ class SegmentationHead(nn.Module):
     return x_in
 
 
-class LMSCNet_SS(nn.Module):
+class OCNet(nn.Module):
 
   def __init__(self, class_num, input_dimensions, class_frequencies):
     '''
-    SSCNet architecture
-    :param N: number of classes to be predicted (i.e. 12 for NYUv2)
+    OCNet architecture
+    :param N: number of classes to be predicted 
     '''
 
     super().__init__()
@@ -92,7 +92,11 @@ class LMSCNet_SS(nn.Module):
       nn.Conv2d(int(f*2.5), int(f*2.5), kernel_size=3, padding=1, stride=1),
       nn.ReLU()
     )
-
+    
+    self.Attention_block_1_8 = MobileViTv2Attention(int(f*2.5), 32, 32)
+    self.Attention_block_1_4 = MobileViTv2Attention(int(f*2), 64, 64)
+    self.Attention_block_1_2 = MobileViTv2Attention(int(f*1.5), 128, 128)
+    
     # Treatment output 1:8
     self.conv_out_scale_1_8 = nn.Conv2d(int(f*2.5), int(f/8), kernel_size=3, padding=1, stride=1)
     self.deconv_1_8__1_2    = nn.ConvTranspose2d(int(f/8), int(f/8), kernel_size=4, padding=0, stride=4)
@@ -127,18 +131,21 @@ class LMSCNet_SS(nn.Module):
 
     # Out 1_8
     out_scale_1_8__2D = self.conv_out_scale_1_8(_skip_1_8)
+    out_scale_1_8__2D = self.Attention_block_1_8(out_scale_1_8__2D)
 
     # Out 1_4
     out = self.deconv1_8(out_scale_1_8__2D)
     out = torch.cat((out, _skip_1_4), 1)
     out = F.relu(self.conv1_4(out))
     out_scale_1_4__2D = self.conv_out_scale_1_4(out)
+    out_scale_1_4__2D = self.Attention_block_1_4(out_scale_1_4__2D)
 
     # Out 1_2
     out = self.deconv1_4(out_scale_1_4__2D)
     out = torch.cat((out, _skip_1_2, self.deconv_1_8__1_2(out_scale_1_8__2D)), 1)
     out = F.relu(self.conv1_2(out))
     out_scale_1_2__2D = self.conv_out_scale_1_2(out)
+    out_scale_1_2__2D = self.Attention_block_1_2(out_scale_1_2__2D)
 
     # Out 1_1
     out = self.deconv1_2(out_scale_1_2__2D)

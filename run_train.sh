@@ -1,1 +1,1 @@
-python3 LMSCNet/train.py --cfg /root/LMSCNet/SSC_configs/routines/OCNet.yaml --dset_root /root/semantic_kitti
+python3 OCNet/train.py --cfg /root/OCNet/SSC_configs/routines/OCNet.yaml --dset_root /root/datasets/semantic_kitti

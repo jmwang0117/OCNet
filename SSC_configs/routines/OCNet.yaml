@@ -33,7 +33,7 @@ STATUS:
   BEST_METRIC: /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035/chkpt/best-metric
   CONFIG: /root/OCNet/SSC_configs/routines/OCNet.yaml
   LAST: /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035/chkpt/last
-  RESUME: true
+  RESUME: False
 TRAIN:
   BATCH_SIZE: 20
   CHECKPOINT_PERIOD: 15

@@ -292,7 +292,7 @@ def validate(model, dset, _cfg, epoch, logger, tbwriter, metrics):
 def main():
   start_time = time.time()
 
-  # https://github.com/pytorch/pytorch/issues/27588
+  
   torch.backends.cudnn.enabled = False
   
   seed_all(0)
@@ -330,9 +330,11 @@ def main():
   optimizer = build_optimizer(_cfg, model)
   scheduler = build_scheduler(_cfg, optimizer)
 
-  #model, optimizer, scheduler, epoch = checkpoint.load(model, optimizer, scheduler, _cfg._dict['STATUS']['RESUME'], _cfg._dict['STATUS']['LAST'], logger)
+  model, optimizer, scheduler, epoch = checkpoint.load(model, optimizer, scheduler, _cfg._dict['STATUS']['RESUME'],
+                                                       _cfg._dict['STATUS']['LAST'], logger)
 
-  best_record = train(model, optimizer, scheduler, dataset, _cfg, 80, logger, tbwriter)
+
+  best_record = train(model, optimizer, scheduler, dataset, _cfg, epoch, logger, tbwriter)
 
   logger.info('=> ============ Network trained - all epochs passed... ============')
 

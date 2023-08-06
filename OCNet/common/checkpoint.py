@@ -2,7 +2,7 @@ from torch.nn.parallel import DataParallel, DistributedDataParallel
 import torch
 import os
 from glob import glob
-
+import torch.nn as nn
 from OCNet.common.io_tools import _remove_recursively, _create_directory
 
 
@@ -13,10 +13,13 @@ def load(model, optimizer, scheduler, resume, path, logger):
 
   # If not resume, initialize model and return everything as it is
   if not resume:
-    logger.info('=> No checkpoint. Initializing model from scratch')
-    model.weights_init()
-    epoch = 1
-    return model, optimizer, scheduler, epoch
+      logger.info('=> No checkpoint. Initializing model from scratch')
+      if isinstance(model, nn.DataParallel): # check if the model is in DataParallel mode
+          model.module.weights_init()
+      else: 
+          model.weights_init()
+      epoch = 1
+      return model, optimizer, scheduler, epoch
 
   # If resume, check that path exists and load everything to return
   else:

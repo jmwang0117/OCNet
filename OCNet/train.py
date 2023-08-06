@@ -221,7 +221,7 @@ def validate(model, dset, _cfg, epoch, logger, tbwriter, metrics):
 
       scores = model(data)
 
-      loss = model.compute_loss(scores, data)
+      loss = model.module.compute_loss(scores, data) if isinstance(model, nn.DataParallel) else model.compute_loss(scores, data)
 
       for l_key in loss:
         tbwriter.add_scalar('validation_loss_batch/{}'.format(l_key), loss[l_key].item(), len(dset) * (epoch-1) + t)
@@ -233,7 +233,9 @@ def validate(model, dset, _cfg, epoch, logger, tbwriter, metrics):
         for key in loss.keys(): loss_print += '{} = {:.6f},  '.format(key, loss[key])
         logger.info(loss_print[:-3])
 
-      metrics.add_batch(prediction=scores, target=model.get_target(data))
+     
+      target = model.module.get_target(data) if isinstance(model, nn.DataParallel) else model.get_target(data)
+      metrics.add_batch(prediction=scores, target=target)
 
     for l_key in metrics.losses_track.validation_losses:
       tbwriter.add_scalar('validation_loss_epoch/{}'.format(l_key),
@@ -245,9 +247,9 @@ def validate(model, dset, _cfg, epoch, logger, tbwriter, metrics):
     for scale in metrics.evaluator.keys():
       tbwriter.add_scalar('validation_performance/{}/mIoU'.format(scale), metrics.get_semantics_mIoU(scale).item(), epoch-1)
       tbwriter.add_scalar('validation_performance/{}/IoU'.format(scale), metrics.get_occupancy_IoU(scale).item(), epoch-1)
-      # tbwriter.add_scalar('validation_performance/{}/Precision'.format(scale), metrics.get_occupancy_Precision(scale).item(), epoch-1)
-      # tbwriter.add_scalar('validation_performance/{}/Recall'.format(scale), metrics.get_occupancy_Recall(scale).item(), epoch-1)
-      # tbwriter.add_scalar('validation_performance/{}/F1'.format(scale), metrics.get_occupancy_F1(scale).item(), epoch-1)
+      tbwriter.add_scalar('validation_performance/{}/Precision'.format(scale), metrics.get_occupancy_Precision(scale).item(), epoch-1)
+      tbwriter.add_scalar('validation_performance/{}/Recall'.format(scale), metrics.get_occupancy_Recall(scale).item(), epoch-1)
+      tbwriter.add_scalar('validation_performance/{}/F1'.format(scale), metrics.get_occupancy_F1(scale).item(), epoch-1)
 
     logger.info('=> [Epoch {} - Total Validation Loss = {}]'.format(epoch, epoch_loss))
     for scale in metrics.evaluator.keys():

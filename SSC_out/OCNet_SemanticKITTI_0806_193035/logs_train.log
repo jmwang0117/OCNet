@@ -25,3 +25,79 @@
 2023-08-06 20:33:01,670 -- => =============== Epoch [1/80] ===============
 2023-08-06 20:33:01,670 -- => Reminder - Output of routine on /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035
 2023-08-06 20:33:01,670 -- => Learning rate: 0.001
+2023-08-06 20:37:16,091 -- => Epoch [1/80], Iteration [50/192], Learn Rate: 0.001, Train Losses: total = 0.329922,  semantic_1_1 = 0.329922
+2023-08-06 20:41:23,623 -- => Epoch [1/80], Iteration [100/192], Learn Rate: 0.001, Train Losses: total = 0.353039,  semantic_1_1 = 0.353039
+2023-08-06 20:45:32,470 -- => Epoch [1/80], Iteration [150/192], Learn Rate: 0.001, Train Losses: total = 0.290166,  semantic_1_1 = 0.290166
+2023-08-06 20:49:02,267 -- => [Epoch 1 - Total Train Loss = 0.40630531311035156]
+2023-08-06 20:49:02,268 -- => [Epoch 1 - Scale 1_1: Loss = 0.406305 - mIoU = 0.016959 - IoU = 0.160758 - P = 0.379645 - R = 0.218032 - F1 = 0.276989]
+2023-08-06 20:49:02,268 -- => Epoch 1 - Training set class-wise IoU:
+2023-08-06 20:49:02,269 --     => IoU car: 0.000713
+2023-08-06 20:49:02,269 --     => IoU bicycle: 0.000032
+2023-08-06 20:49:02,269 --     => IoU motorcycle: 0.000014
+2023-08-06 20:49:02,270 --     => IoU truck: 0.000484
+2023-08-06 20:49:02,270 --     => IoU other-vehicle: 0.000120
+2023-08-06 20:49:02,270 --     => IoU person: 0.000068
+2023-08-06 20:49:02,270 --     => IoU bicyclist: 0.000037
+2023-08-06 20:49:02,271 --     => IoU motorcyclist: 0.000069
+2023-08-06 20:49:02,271 --     => IoU road: 0.185494
+2023-08-06 20:49:02,271 --     => IoU parking: 0.000335
+2023-08-06 20:49:02,271 --     => IoU sidewalk: 0.021393
+2023-08-06 20:49:02,271 --     => IoU other-ground: 0.000231
+2023-08-06 20:49:02,272 --     => IoU building: 0.001457
+2023-08-06 20:49:02,272 --     => IoU fence: 0.000129
+2023-08-06 20:49:02,272 --     => IoU vegetation: 0.104031
+2023-08-06 20:49:02,272 --     => IoU trunk: 0.000344
+2023-08-06 20:49:02,272 --     => IoU terrain: 0.006979
+2023-08-06 20:49:02,272 --     => IoU pole: 0.000241
+2023-08-06 20:49:02,273 --     => IoU traffic-sign: 0.000056
+2023-08-06 20:49:02,273 -- => Passing the network on the validation set...
+2023-08-07 00:02:25,768 -- ============ Training routine: "/root/OCNet/SSC_configs/routines/OCNet.yaml" ============
+
+2023-08-07 00:02:26,550 -- => Loading network architecture...
+2023-08-07 00:02:28,203 -- => Loading optimizer...
+2023-08-07 00:02:28,205 -- => No checkpoint. Initializing model from scratch
+2023-08-07 00:02:28,208 -- => =============== Epoch [1/80] ===============
+2023-08-07 00:02:28,208 -- => Reminder - Output of routine on /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035
+2023-08-07 00:02:28,208 -- => Learning rate: 0.001
+2023-08-07 00:06:44,213 -- => Epoch [1/80], Iteration [50/192], Learn Rate: 0.001, Train Losses: total = 0.329655,  semantic_1_1 = 0.329655
+2023-08-07 00:10:52,536 -- => Epoch [1/80], Iteration [100/192], Learn Rate: 0.001, Train Losses: total = 0.352772,  semantic_1_1 = 0.352772
+2023-08-07 00:15:01,524 -- => Epoch [1/80], Iteration [150/192], Learn Rate: 0.001, Train Losses: total = 0.290242,  semantic_1_1 = 0.290242
+2023-08-07 00:18:32,066 -- => [Epoch 1 - Total Train Loss = 0.40635842084884644]
+2023-08-07 00:18:32,068 -- => [Epoch 1 - Scale 1_1: Loss = 0.406358 - mIoU = 0.016860 - IoU = 0.160243 - P = 0.379225 - R = 0.217223 - F1 = 0.276223]
+2023-08-07 00:18:32,068 -- => Epoch 1 - Training set class-wise IoU:
+2023-08-07 00:18:32,069 --     => IoU car: 0.000713
+2023-08-07 00:18:32,069 --     => IoU bicycle: 0.000032
+2023-08-07 00:18:32,070 --     => IoU motorcycle: 0.000014
+2023-08-07 00:18:32,070 --     => IoU truck: 0.000484
+2023-08-07 00:18:32,071 --     => IoU other-vehicle: 0.000120
+2023-08-07 00:18:32,071 --     => IoU person: 0.000068
+2023-08-07 00:18:32,072 --     => IoU bicyclist: 0.000037
+2023-08-07 00:18:32,072 --     => IoU motorcyclist: 0.000069
+2023-08-07 00:18:32,072 --     => IoU road: 0.184751
+2023-08-07 00:18:32,073 --     => IoU parking: 0.000335
+2023-08-07 00:18:32,073 --     => IoU sidewalk: 0.021512
+2023-08-07 00:18:32,073 --     => IoU other-ground: 0.000231
+2023-08-07 00:18:32,073 --     => IoU building: 0.001451
+2023-08-07 00:18:32,073 --     => IoU fence: 0.000130
+2023-08-07 00:18:32,073 --     => IoU vegetation: 0.103112
+2023-08-07 00:18:32,074 --     => IoU trunk: 0.000344
+2023-08-07 00:18:32,074 --     => IoU terrain: 0.006633
+2023-08-07 00:18:32,074 --     => IoU pole: 0.000241
+2023-08-07 00:18:32,074 --     => IoU traffic-sign: 0.000056
+2023-08-07 00:18:32,074 -- => Passing the network on the validation set...
+2023-08-07 01:45:52,369 -- ============ Training routine: "/root/OCNet/SSC_configs/routines/OCNet.yaml" ============
+
+2023-08-07 01:45:53,116 -- => Loading network architecture...
+2023-08-07 01:45:54,750 -- => Loading optimizer...
+2023-08-07 01:45:54,752 -- => No checkpoint. Initializing model from scratch
+2023-08-07 01:45:54,755 -- => =============== Epoch [1/80] ===============
+2023-08-07 01:45:54,755 -- => Reminder - Output of routine on /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035
+2023-08-07 01:45:54,755 -- => Learning rate: 0.001
+2023-08-07 01:46:16,512 -- ============ Training routine: "/root/OCNet/SSC_configs/routines/OCNet.yaml" ============
+
+2023-08-07 01:46:17,251 -- => Loading network architecture...
+2023-08-07 01:46:18,851 -- => Loading optimizer...
+2023-08-07 01:46:18,852 -- => No checkpoint. Initializing model from scratch
+2023-08-07 01:46:18,855 -- => =============== Epoch [1/80] ===============
+2023-08-07 01:46:18,855 -- => Reminder - Output of routine on /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035
+2023-08-07 01:46:18,856 -- => Learning rate: 0.001

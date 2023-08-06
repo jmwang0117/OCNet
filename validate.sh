@@ -1,0 +1,1 @@
+python LMSCNet/validate.py --weights /root/LMSCNet/weight/LMSCNet.pth  --dset_root /root/datasets/semantic_kitti

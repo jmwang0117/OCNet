@@ -3,24 +3,24 @@ import argparse
 import torch
 import torch.nn as nn
 import sys
-
+os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"  # Specify the fourth GPU
 # Append root directory to system path for imports
 repo_path, _ = os.path.split(os.path.realpath(__file__))
 repo_path, _ = os.path.split(repo_path)
 sys.path.append(repo_path)
 
-from LMSCNet.common.seed import seed_all
-from LMSCNet.common.config import CFG
-from LMSCNet.common.dataset import get_dataset
-from LMSCNet.common.model import get_model
-from LMSCNet.common.logger import get_logger
-from LMSCNet.common.io_tools import dict_to
-from LMSCNet.common.metrics import Metrics
-import LMSCNet.common.checkpoint as checkpoint
+from OCNet.common.seed import seed_all
+from OCNet.common.config import CFG
+from OCNet.common.dataset import get_dataset
+from OCNet.common.model import get_model
+from OCNet.common.logger import get_logger
+from OCNet.common.io_tools import dict_to
+from OCNet.common.metrics import Metrics
+import OCNet.common.checkpoint as checkpoint
 
 
 def parse_args():
-  parser = argparse.ArgumentParser(description='LMSCNet validating')
+  parser = argparse.ArgumentParser(description='OCNet validating')
   parser.add_argument(
     '--weights',
     dest='weights_file',
@@ -127,7 +127,7 @@ def main():
   model = get_model(_cfg, dataset['train'].dataset)
   if torch.cuda.device_count() > 1:
     model = nn.DataParallel(model)
-    model = model.module
+    #model = model.module
 
   logger.info('=> Loading network weights...')
   model = checkpoint.load_model(model, weights_f, logger)

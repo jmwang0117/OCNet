@@ -1,0 +1,16 @@
+2023-08-08 03:41:56,699 -- ============ Training routine: "/root/OCNet/SSC_configs/routines/OCNet.yaml" ============
+
+2023-08-08 03:41:57,485 -- => Loading network architecture...
+2023-08-08 03:41:57,595 -- => Loading optimizer...
+2023-08-08 03:41:57,597 -- => No checkpoint. Initializing model from scratch
+2023-08-08 03:41:59,052 -- => =============== Epoch [1/80] ===============
+2023-08-08 03:41:59,052 -- => Reminder - Output of routine on /root/OCNet/SSC_out/OCNet_SemanticKITTI_0808_034156
+2023-08-08 03:41:59,052 -- => Learning rate: 0.001
+2023-08-08 03:43:59,026 -- ============ Training routine: "/root/OCNet/SSC_configs/routines/OCNet.yaml" ============
+
+2023-08-08 03:43:59,776 -- => Loading network architecture...
+2023-08-08 03:43:59,887 -- => Loading optimizer...
+2023-08-08 03:43:59,888 -- => No checkpoint. Initializing model from scratch
+2023-08-08 03:44:01,398 -- => =============== Epoch [1/80] ===============
+2023-08-08 03:44:01,398 -- => Reminder - Output of routine on /root/OCNet/SSC_out/OCNet_SemanticKITTI_0808_034156
+2023-08-08 03:44:01,399 -- => Learning rate: 0.001

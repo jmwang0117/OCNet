@@ -78,7 +78,7 @@ config_dict['TRAIN']['SUMMARY_PERIOD'] = 50
 
 # -------------------------------------------------------------
 config_dict['VAL'] = {}
-config_dict['VAL']['BATCH_SIZE'] = 8
+config_dict['VAL']['BATCH_SIZE'] = 12
 config_dict['VAL']['SUMMARY_PERIOD'] = 20
 # -------------------------------------------------------------
 

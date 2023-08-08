@@ -1,1 +1,1 @@
-python3 OCNet/validate.py --weights /root/OCNet/SSC_out/OCNet_SemanticKITTI_0806_193035/chkpt/best-metric/weights_epoch_055.pth  --dset_root /root/datasets/semantic_kitti
+python3 OCNet/validate.py --weights /root/OCNet/weight/weights_epoch_031.pth  --dset_root /root/datasets/semantic_kitti

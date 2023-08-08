@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 import sys
-
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"  # Specify the fourth GPU
 # Append root directory to system path for imports
 repo_path, _ = os.path.split(os.path.realpath(__file__))
 repo_path, _ = os.path.split(repo_path)
@@ -133,9 +133,9 @@ def train(model, optimizer, scheduler, dataset, _cfg, start_epoch, logger, tbwri
     for scale in metrics.evaluator.keys():
       tbwriter.add_scalar('train_performance/{}/mIoU'.format(scale), metrics.get_semantics_mIoU(scale).item(), epoch-1)
       tbwriter.add_scalar('train_performance/{}/IoU'.format(scale), metrics.get_occupancy_IoU(scale).item(), epoch-1)
-      # tbwriter.add_scalar('train_performance/{}/Precision'.format(scale), metrics.get_occupancy_Precision(scale).item(), epoch-1)
-      # tbwriter.add_scalar('train_performance/{}/Recall'.format(scale), metrics.get_occupancy_Recall(scale).item(), epoch-1)
-      # tbwriter.add_scalar('train_performance/{}/F1'.format(scale), metrics.get_occupancy_F1(scale).item(), epoch-1)
+      tbwriter.add_scalar('train_performance/{}/Precision'.format(scale), metrics.get_occupancy_Precision(scale).item(), epoch-1)
+      tbwriter.add_scalar('train_performance/{}/Recall'.format(scale), metrics.get_occupancy_Recall(scale).item(), epoch-1)
+      tbwriter.add_scalar('train_performance/{}/F1'.format(scale), metrics.get_occupancy_F1(scale).item(), epoch-1)
 
     logger.info('=> [Epoch {} - Total Train Loss = {}]'.format(epoch, epoch_loss))
     for scale in metrics.evaluator.keys():
@@ -228,9 +228,9 @@ def validate(model, dset, _cfg, epoch, logger, tbwriter, metrics):
     for scale in metrics.evaluator.keys():
       tbwriter.add_scalar('validation_performance/{}/mIoU'.format(scale), metrics.get_semantics_mIoU(scale).item(), epoch-1)
       tbwriter.add_scalar('validation_performance/{}/IoU'.format(scale), metrics.get_occupancy_IoU(scale).item(), epoch-1)
-      # tbwriter.add_scalar('validation_performance/{}/Precision'.format(scale), metrics.get_occupancy_Precision(scale).item(), epoch-1)
-      # tbwriter.add_scalar('validation_performance/{}/Recall'.format(scale), metrics.get_occupancy_Recall(scale).item(), epoch-1)
-      # tbwriter.add_scalar('validation_performance/{}/F1'.format(scale), metrics.get_occupancy_F1(scale).item(), epoch-1)
+      tbwriter.add_scalar('validation_performance/{}/Precision'.format(scale), metrics.get_occupancy_Precision(scale).item(), epoch-1)
+      tbwriter.add_scalar('validation_performance/{}/Recall'.format(scale), metrics.get_occupancy_Recall(scale).item(), epoch-1)
+      tbwriter.add_scalar('validation_performance/{}/F1'.format(scale), metrics.get_occupancy_F1(scale).item(), epoch-1)
 
     logger.info('=> [Epoch {} - Total Validation Loss = {}]'.format(epoch, epoch_loss))
     for scale in metrics.evaluator.keys():

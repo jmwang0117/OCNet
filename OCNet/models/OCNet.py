@@ -98,6 +98,7 @@ class OCNet(nn.Module):
     self.criss_cross_attention = CrissCrossAttention(int(f*2.5))
     self.Attention_block_1_8 = MobileViTv2Attention(int(f*2.5), 32, 32)
     self.Attention_block_1_4 = MobileViTv2Attention(int(f*2), 64, 64)
+    #self.Attention_block_1_2 = MobileViTv2Attention(int(f*1.5), 128, 128)
     
     
     # Treatment output 1:8

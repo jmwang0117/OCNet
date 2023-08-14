@@ -36,7 +36,7 @@ config_dict['DATASET']['AUGMENTATION']['FLIPS'] = True  # More data augmentation
 
 # -------------------------------------------------------------
 config_dict['MODEL'] = {}
-config_dict['MODEL']['TYPE'] = 'OCNet'  # [LMSCNet, LMSCNet_SS, SSCNet, SSCNet_full]
+config_dict['MODEL']['TYPE'] = 'OCNet'  # [OCNet, LMSCNet, LMSCNet_SS, SSCNet, SSCNet_full]
 # -------------------------------------------------------------
 
 # -------------------------------------------------------------
@@ -72,7 +72,7 @@ config_dict['STATUS']['RESUME'] = False
 config_dict['TRAIN'] = {}
 config_dict['TRAIN']['BATCH_SIZE'] = 12
 config_dict['TRAIN']['CHECKPOINT_PERIOD'] = 15
-config_dict['TRAIN']['EPOCHS'] = 80
+config_dict['TRAIN']['EPOCHS'] = 100
 config_dict['TRAIN']['SUMMARY_PERIOD'] = 50
 # -------------------------------------------------------------
 

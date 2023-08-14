@@ -46,6 +46,32 @@ class SegmentationHead(nn.Module):
 
     return x_in
 
+class DepthwiseSeparableConv(nn.Module):
+
+    def __init__(self, in_channels, out_channels, kernel_size, padding=1, stride=1, bias=False):
+        super().__init__()
+        self.depthwise_conv = nn.Conv2d(in_channels, in_channels, kernel_size,
+                                        stride=stride, padding=padding, groups=in_channels, bias=bias)
+        self.pointwise_conv = nn.Conv2d(in_channels, out_channels, 1, bias=bias)
+
+    def forward(self, x):
+        out = self.depthwise_conv(x)
+        out = self.pointwise_conv(out)
+        return out
+
+class EncoderBlock(nn.Module):
+
+    def __init__(self, in_channels, mid_channels, out_channels, kernel_size=3, padding=1, stride=1):
+        super().__init__()
+        self.conv1 = DepthwiseSeparableConv(in_channels, mid_channels, kernel_size, padding, stride)
+        self.relu1 = nn.ReLU()
+        self.conv2 = DepthwiseSeparableConv(mid_channels, out_channels, kernel_size, padding, stride)
+        self.relu2 = nn.ReLU()
+
+    def forward(self, x):
+        x = self.relu1(self.conv1(x))
+        x = self.relu2(self.conv2(x))
+        return x
 
 class OCNet(nn.Module):
 
@@ -54,7 +80,6 @@ class OCNet(nn.Module):
     OCNet architecture
     :param N: number of classes to be predicted 
     '''
-
     super().__init__()
     self.nbr_classes = class_num
     self.input_dimensions = input_dimensions  # Grid dimensions should be (W, H, D).. z or height being axis 1
@@ -93,13 +118,10 @@ class OCNet(nn.Module):
       nn.Conv2d(int(f*2.5), int(f*2.5), kernel_size=3, padding=1, stride=1),
       nn.ReLU()
     )
-   
-   
+
     self.criss_cross_attention = CrissCrossAttention(int(f*2.5))
     self.Attention_block_1_8 = MobileViTv2Attention(int(f*2.5), 32, 32)
     self.Attention_block_1_4 = MobileViTv2Attention(int(f*2), 64, 64)
-    #self.Attention_block_1_2 = MobileViTv2Attention(int(f*1.5), 128, 128)
-    
     
     # Treatment output 1:8
     self.conv_out_scale_1_8 = nn.Conv2d(int(f*2.5), int(f/8), kernel_size=3, padding=1, stride=1)
@@ -124,7 +146,7 @@ class OCNet(nn.Module):
 
   def forward(self, x):
 
-    input = x['3D_OCCUPANCY']  # Input to LMSCNet model is 3D occupancy big scale (1:1) [bs, 1, W, H, D]
+    input = x['3D_OCCUPANCY']  # Input to OCNet model is 3D occupancy big scale (1:1) [bs, 1, W, H, D]
     input = torch.squeeze(input, dim=1).permute(0, 2, 1, 3)  # Reshaping to the right way for 2D convs [bs, H, W, D]
 
     # Encoder block
@@ -160,9 +182,7 @@ class OCNet(nn.Module):
 
     # Take back to [W, H, D] axis order
     out_scale_1_1__3D = out_scale_1_1__3D.permute(0, 1, 3, 2, 4)  # [bs, C, H, W, D] -> [bs, C, W, H, D]
-
     scores = {'pred_semantic_1_1': out_scale_1_1__3D}
-
     return scores
 
   def weights_initializer(self, m):
@@ -195,7 +215,7 @@ class OCNet(nn.Module):
 
   def get_class_weights(self):
     '''
-    Cless weights being 1/log(fc) (https://arxiv.org/pdf/2008.10559.pdf)
+    Cless weights being 1/log(fc)
     '''
     epsilon_w = 0.001  # eps to avoid zero division
     weights = torch.from_numpy(1 / np.log(self.class_frequencies + epsilon_w))

@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from torch.utils.tensorboard import SummaryWriter
 import sys
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"  # Specify the fourth GPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"  # Specify the fourth GPU
 # Append root directory to system path for imports
 repo_path, _ = os.path.split(os.path.realpath(__file__))
 repo_path, _ = os.path.split(repo_path)
@@ -274,7 +274,6 @@ def validate(model, dset, _cfg, epoch, logger, tbwriter, metrics):
 
 def main():
 
-  # https://github.com/pytorch/pytorch/issues/27588
   torch.backends.cudnn.enabled = False
 
   seed_all(0)

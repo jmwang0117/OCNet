@@ -19,12 +19,17 @@ OPTIMIZER:
   TYPE: Adam
   WEIGHT_DECAY: NA
 OUTPUT:
+  BEST_LOSS: 999999999999
+  BEST_METRIC: -999999999999
+  OUTPUT_PATH: /root/OCNet/SSC_out/OCNet_SemanticKITTI_0826_144334
   OUT_ROOT: /root/OCNet/SSC_out/
 SCHEDULER:
   FREQUENCY: epoch
   LR_POWER: 0.98
   TYPE: power_iteration
 STATUS:
+  CONFIG: /root/OCNet/SSC_configs/routines/OCNet.yaml
+  LAST: ''
   RESUME: false
 TRAIN:
   BATCH_SIZE: 12

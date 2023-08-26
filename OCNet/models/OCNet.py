@@ -120,8 +120,8 @@ class OCNet(nn.Module):
     )
 
     self.criss_cross_attention = CrissCrossAttention(int(f*2.5))
-    self.Attention_block_1_8 = MobileViTv2Attention(int(f*2.5), 32, 32)
-    self.Attention_block_1_4 = MobileViTv2Attention(int(f*2), 64, 64)
+    self.Attention_block_1_8 = MobileViTv2Attention(4, 64, 64)
+    self.Attention_block_1_4 = MobileViTv2Attention(8, 128, 128)
     
     # Treatment output 1:8
     self.conv_out_scale_1_8 = nn.Conv2d(int(f*2.5), int(f/8), kernel_size=3, padding=1, stride=1)
@@ -158,17 +158,19 @@ class OCNet(nn.Module):
 
     # Out 1_8
     out_scale_1_8__2D = self.conv_out_scale_1_8(_skip_1_8)
-    out_scale_1_8__2D = self.Attention_block_1_8(out_scale_1_8__2D)
-
-    # Out 1_4
     out = self.deconv1_8(out_scale_1_8__2D)
+    out = self.Attention_block_1_8(out) 
+       
+
+    # Out 1_4       
     out = torch.cat((out, _skip_1_4), 1)
     out = F.relu(self.conv1_4(out))
     out_scale_1_4__2D = self.conv_out_scale_1_4(out)
-    out_scale_1_4__2D = self.Attention_block_1_4(out_scale_1_4__2D)
-
-    # Out 1_2
     out = self.deconv1_4(out_scale_1_4__2D)
+    
+
+    # Out 1_2    
+    out = self.Attention_block_1_4(out)
     out = torch.cat((out, _skip_1_2, self.deconv_1_8__1_2(out_scale_1_8__2D)), 1)
     out = F.relu(self.conv1_2(out))
     out_scale_1_2__2D = self.conv_out_scale_1_2(out)
